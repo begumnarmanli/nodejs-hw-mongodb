@@ -1,6 +1,10 @@
-import { loginUser, registerUser, refreshSession, logOutUser } from '../services/auth.js';
+import {
+  loginUser,
+  registerUser,
+  refreshSession,
+  logOutUser,
+} from '../services/auth.js';
 import ctrlWrapper from '../utils/ctrlWrapper.js';
-
 
 export const registerUserController = ctrlWrapper(async (req, res) => {
   const user = await registerUser(req.body);
@@ -24,31 +28,32 @@ export const loginUserController = ctrlWrapper(async (req, res) => {
     status: 200,
     data: {
       accessToken: accessToken,
-    }
+    },
   });
 });
 
 export const refreshSessionController = ctrlWrapper(async (req, res) => {
   const { refreshToken } = req.cookies;
-  const { accessToken, refreshToken: newRefreshToken } = await refreshSession(refreshToken);
+  const { accessToken, refreshToken: newRefreshToken } = await refreshSession(
+    refreshToken,
+  );
 
   res.cookie('refreshToken', newRefreshToken, {
     httpOnly: true,
-    maxAge: 30 * 24 * 60 * 60 * 1000
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   });
   res.status(200).json({
-        status: 200,
-        message: 'Successfully refreshed session!',
-        data: {
-            accessToken,
-},
-});
+    status: 200,
+    message: 'Successfully refreshed session!',
+    data: {
+      accessToken,
+    },
+  });
 });
 
 export const logOutUserController = ctrlWrapper(async (req, res) => {
   const { refreshToken } = req.cookies;
   await logOutUser(refreshToken);
   res.clearCookie('refreshToken');
-  res.status(204).send({
-  });
+  res.status(204).send({});
 });

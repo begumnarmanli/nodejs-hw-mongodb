@@ -13,27 +13,39 @@ import {
   updateContactSchema,
 } from '../schemas/contactSchema.js';
 import { isValidId } from '../middlewares/isValidId.js';
-import { authenticate } from '../middlewares/authenticate.js'
+import { authenticate } from '../middlewares/authenticate.js';
 
 const router = express.Router();
 
 router.get('/', authenticate, ctrlWrapper(getAllContactsController));
 
-router.get('/:contactId',authenticate, isValidId, ctrlWrapper(getContactByIdController));
+router.get(
+  '/:contactId',
+  authenticate,
+  isValidId,
+  ctrlWrapper(getContactByIdController),
+);
 
 router.post(
-  '/', authenticate,
+  '/',
+  authenticate,
   validateBody(addContactSchema),
   ctrlWrapper(createContactController),
 );
 
 router.patch(
-  '/:contactId', authenticate,
+  '/:contactId',
+  authenticate,
   isValidId,
   validateBody(updateContactSchema),
   ctrlWrapper(patchContactController),
 );
 
-router.delete('/:contactId', authenticate, isValidId, ctrlWrapper(deleteContactController));
+router.delete(
+  '/:contactId',
+  authenticate,
+  isValidId,
+  ctrlWrapper(deleteContactController),
+);
 
 export default router;

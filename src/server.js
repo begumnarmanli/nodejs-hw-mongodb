@@ -7,7 +7,6 @@ import { errorHandler } from './middlewares/errorHandler.js';
 import authRouter from './routes/auth.js';
 import cookieParser from 'cookie-parser';
 
-
 export const setupServer = () => {
   const app = express();
 
