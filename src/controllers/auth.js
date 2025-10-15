@@ -3,8 +3,8 @@ import {
   registerUser,
   refreshSession,
   logOutUser,
-} from '../services/auth.js';
-import ctrlWrapper from '../utils/ctrlWrapper.js';
+} from '#root/services/auth.js';
+import ctrlWrapper from '#root/utils/ctrlWrapper.js';
 
 export const registerUserController = ctrlWrapper(async (req, res) => {
   const user = await registerUser(req.body);

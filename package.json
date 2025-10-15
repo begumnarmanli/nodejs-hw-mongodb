@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "type": "module",
+  "imports": {
+    "#root/*": "./src/*"
+  },
   "scripts": {
     "dev": "node src/index.js",
     "start": "node src/index.js",

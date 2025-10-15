@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import { signUpSchema } from '../schemas/authSchema.js';
-import validateBody from '../middlewares/validateBody.js';
-import ctrlWrapper from '../utils/ctrlWrapper.js';
+import { signUpSchema } from '#root/schemas/authSchema.js';
+import validateBody from '#root/middlewares/validateBody.js';
+import ctrlWrapper from '#root/utils/ctrlWrapper.js';
 import {
   registerUserController,
   loginUserController,
   refreshSessionController,
   logOutUserController,
-} from '../controllers/auth.js';
+} from '#root/controllers/auth.js';
 
 const router = new Router();
 

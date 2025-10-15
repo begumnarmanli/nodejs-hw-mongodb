@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
-import { User } from '../models/user.js';
+import { User } from '#root/models/user.js';
 import { randomBytes } from 'crypto';
-import { Session } from '../models/session.js';
+import { Session } from '#root/models/session.js';
 
 const ACCESS_TOKEN_LIFETIME = 15 * 60 * 1000;
 const REFRESH_TOKEN_LIFETIME = 30 * 24 * 60 * 60 * 1000;
