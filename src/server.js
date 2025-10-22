@@ -1,12 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
-import contactsRouter from './routes/contactsRouter.js';
-import { notFoundHandler } from './middlewares/notFoundHandler.js';
-import { errorHandler } from './middlewares/errorHandler.js';
-import authRouter from './routes/auth.js';
+import contactsRouter from '#root/routes/contactsRouter.js';
+import { notFoundHandler } from '#root/middlewares/notFoundHandler.js';
+import { errorHandler } from '#root/middlewares/errorHandler.js';
+import authRouter from '#root/routes/auth.js';
 import cookieParser from 'cookie-parser';
-
 
 export const setupServer = () => {
   const app = express();
