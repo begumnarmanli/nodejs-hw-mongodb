@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { signUpSchema } from '#root/schemas/authSchema.js';
+import { signUpSchema, signInSchema } from '#root/schemas/authSchema.js';
 import validateBody from '#root/middlewares/validateBody.js';
 import ctrlWrapper from '#root/utils/ctrlWrapper.js';
 import {
@@ -19,7 +19,7 @@ router.post(
 
 router.post(
   '/login',
-  validateBody(signUpSchema),
+  validateBody(signInSchema),
   ctrlWrapper(loginUserController),
 );
 
