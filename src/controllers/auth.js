@@ -3,8 +3,10 @@ import {
   registerUser,
   refreshSession,
   logOutUser,
+  requestResetToken,
 } from '#root/services/auth.js';
 import ctrlWrapper from '#root/utils/ctrlWrapper.js';
+import { resetPassword } from '#root/services/auth.js';
 
 export const registerUserController = ctrlWrapper(async (req, res) => {
   const user = await registerUser(req.body);
@@ -56,4 +58,24 @@ export const logOutUserController = ctrlWrapper(async (req, res) => {
   await logOutUser(refreshToken);
   res.clearCookie('refreshToken');
   res.status(204).send({});
+});
+
+export const resetPasswordController = ctrlWrapper(async (req, res) => {
+  const payload = req.body;
+  await resetPassword(payload);
+  res.status(200).json({
+    status: 200,
+    message: 'Password has been successfully reset.',
+    data: {},
+  });
+});
+
+export const requestResetEmailController = ctrlWrapper(async (req, res) => {
+  const { email } = req.body;
+  await requestResetToken(email);
+  res.status(200).json({
+    status: 200,
+    message: 'Reset password email has been successfully sent.',
+    data: {},
+  });
 });

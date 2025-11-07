@@ -6,6 +6,7 @@ import {
   getAllContacts,
 } from '#root/services/contactsService.js';
 import createHttpError from 'http-errors';
+import { saveFileToCloudinary } from '#root/utils/saveFileToCloudinary.js';
 
 export const getAllContactsController = async (req, res) => {
   const userId = req.user._id;
@@ -36,7 +37,21 @@ export const getContactByIdController = async (req, res) => {
 
 export const createContactController = async (req, res) => {
   const userId = req.user._id;
-  const contact = await createContact(req.body, userId);
+  const photo = req.file;
+
+  let photoUrl;
+
+  if (photo) {
+    photoUrl = await saveFileToCloudinary(photo);
+  }
+
+  const contact = await createContact(
+    {
+      ...req.body,
+      photo: photoUrl,
+    },
+    userId,
+  );
 
   res.status(201).json({
     status: 201,
@@ -48,12 +63,23 @@ export const createContactController = async (req, res) => {
 export const patchContactController = async (req, res) => {
   const { contactId } = req.params;
   const userId = req.user._id;
-  const result = await updateContact(contactId, req.body, userId);
 
+  const photo = req.file;
+  let photoUrl;
+  if (photo) {
+    photoUrl = await saveFileToCloudinary(photo);
+  }
+  const result = await updateContact(
+    contactId,
+    {
+      ...req.body,
+      photo: photoUrl,
+    },
+    userId,
+  );
   if (!result) {
     throw createHttpError(404, 'Contact not found');
   }
-
   res.status(200).json({
     status: 200,
     message: 'Successfully patched a contact',
