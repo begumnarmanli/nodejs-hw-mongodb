@@ -3,6 +3,8 @@ import createHttpError from 'http-errors';
 import { User } from '#root/models/user.js';
 import { randomBytes } from 'crypto';
 import { Session } from '#root/models/session.js';
+import jwt from 'jsonwebtoken';
+import { sendEmail } from '#root/utils/sendEmail.js';
 
 const ACCESS_TOKEN_LIFETIME = 15 * 60 * 1000;
 const REFRESH_TOKEN_LIFETIME = 30 * 24 * 60 * 60 * 1000;
@@ -98,4 +100,50 @@ export const logOutUser = async (refreshToken) => {
     throw createHttpError(401, 'Invalid session');
   }
   await Session.deleteOne({ _id: session._id });
+};
+
+export const requestResetToken = async (email) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
+
+  const token = jwt.sign(
+    { _id: user._id, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: '5m' },
+  );
+
+  const resetLink = `${process.env.APP_DOMAIN}/reset-password?token=${token}`;
+  try {
+    await sendEmail({
+      to: user.email,
+      subject: 'Password Reset Request',
+      text: `Click the following link to reset your password: ${resetLink}`,
+    });
+  } catch (_) {
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
+    );
+  }
+};
+
+export const resetPassword = async (payload) => {
+  let decoded;
+  try {
+    decoded = jwt.verify(payload.token, process.env.JWT_SECRET);
+  } catch (_error) {
+    throw createHttpError(401, 'Token is expired or invalid.');
+  }
+
+  const user = await User.findOne({ email: decoded.email });
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
+
+  const encryptedPassword = await bcrypt.hash(payload.password, 10);
+  user.password = encryptedPassword;
+  await user.save();
+  await Session.deleteMany({ userId: user._id });
 };
