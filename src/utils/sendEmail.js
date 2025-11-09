@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import nodemailer from "nodemailer";
 
 export const sendEmail = async (data) => {
@@ -6,7 +7,7 @@ export const sendEmail = async (data) => {
 
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
+    port: Number(process.env.SMTP_PORT),
     secure: false,
     auth: {
       user: process.env.SMTP_USER,
