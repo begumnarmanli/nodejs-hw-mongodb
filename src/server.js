@@ -5,6 +5,7 @@ import contactsRouter from '#root/routes/contactsRouter.js';
 import { notFoundHandler } from '#root/middlewares/notFoundHandler.js';
 import { errorHandler } from '#root/middlewares/errorHandler.js';
 import authRouter from '#root/routes/auth.js';
+import debugRouter from '#root/routes/debug.js';
 import cookieParser from 'cookie-parser';
 
 export const setupServer = () => {
@@ -21,6 +22,7 @@ export const setupServer = () => {
 
   app.use('/contacts', contactsRouter);
   app.use('/auth', authRouter);
+  app.use('/debug', debugRouter);
   app.use(notFoundHandler);
   app.use(errorHandler);
 
