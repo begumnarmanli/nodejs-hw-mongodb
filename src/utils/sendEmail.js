@@ -1,6 +1,9 @@
 import nodemailer from "nodemailer";
 
 export const sendEmail = async (data) => {
+  console.log("sendEmail fonksiyonu çağrıldı");
+  console.log("Gönderilecek veri:", data);
+
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
@@ -19,10 +22,11 @@ export const sendEmail = async (data) => {
   };
 
   try {
-    await transporter.sendMail(mailOptions);
-    console.log(`Email sent successfully to: ${data.to}`);
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email gönderildi, info:", info);
+    return info;
   } catch (error) {
-    console.error("Failed to send email:", error.message);
-    throw new Error("Failed to send the email, please try again later.");
+    console.error("Email gönderilemedi, hata:", error);
+    throw new Error("Email gönderimi başarısız oldu. Lütfen tekrar deneyin.");
   }
 };
