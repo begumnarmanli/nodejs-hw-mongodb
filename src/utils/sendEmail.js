@@ -16,7 +16,7 @@ const getTransporter = () => {
   }
 
   const useSSL = SMTP_PORT === 465;
-  
+
   return nodemailer.createTransport({
     host: SMTP_HOST,
     port: SMTP_PORT,
@@ -87,14 +87,11 @@ export const sendEmail = async (options) => {
   const htmlContent = `<p>Şifre sıfırlama linki: <a href="${data.resetLink}">${data.resetLink}</a></p>`;
 
   try {
-    // Render'da SMTP portları engellenmiş olabilir, bu yüzden API kullanıyoruz
-    // BREVO_API_KEY varsa API kullan (Render'da çalışır)
     if (BREVO_API_KEY) {
       console.log('Brevo API ile e-posta gönderiliyor...');
       return await sendEmailViaAPI(to, subject, htmlContent);
     }
 
-    // API yoksa SMTP'yi dene (local development için)
     console.log('SMTP ile e-posta gönderiliyor...');
     const transporter = getTransporter();
     const info = await transporter.sendMail({
