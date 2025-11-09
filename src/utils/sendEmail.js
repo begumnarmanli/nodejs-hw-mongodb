@@ -24,17 +24,26 @@ const getTransporter = () => {
     throw new Error('E-posta servisi için gerekli ortam değişkenleri tanımlı değil!');
   }
 
+  // Brevo SMTP için port 587 (STARTTLS) veya 465 (SSL) kullanılabilir
+  // Render'da bazen port 587 engellenmiş olabilir, bu yüzden 465'i de deneyebiliriz
+  const useSSL = SMTP_PORT === 465;
+  
   return nodemailer.createTransport({
     host: SMTP_HOST,
     port: SMTP_PORT,
-    secure: false,
+    secure: useSSL, // true for 465, false for 587
+    requireTLS: !useSSL, // STARTTLS için
     auth: {
       user: SMTP_USER,
       pass: SMTP_PASSWORD,
     },
-    connectionTimeout: 10000,
-    greetingTimeout: 5000,
-    socketTimeout: 10000,
+    tls: {
+      rejectUnauthorized: false,
+      minVersion: 'TLSv1.2',
+    },
+    connectionTimeout: 60000, // 60 seconds
+    greetingTimeout: 30000, // 30 seconds
+    socketTimeout: 60000, // 60 seconds
     logger: true,
     debug: true,
   });
@@ -64,7 +73,7 @@ export const sendEmail = async (options) => {
         html: htmlContent,
       }),
       new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('E-posta gönderme timeout (20 saniye)')), 20000)
+        setTimeout(() => reject(new Error('E-posta gönderme timeout (60 saniye)')), 60000)
       )
     ]);
 
