@@ -1,25 +1,18 @@
 import 'dotenv/config';
-import path from 'node:path';
-import fs from 'node:fs/promises';
-import handlebars from 'handlebars';
-import { TEMPLATES_DIR } from '../constants/index.js';
 
 const BREVO_API_KEY = process.env.BREVO_API_KEY;
 const SMTP_FROM = process.env.SMTP_FROM;
 const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 
 export const sendEmail = async (options) => {
-    const { to, subject, template, data } = options;
+    const { to, subject, data } = options;
 
     if (!BREVO_API_KEY) {
         console.error("BREVO_API_KEY ortam değişkeni tanımlı değil!");
         throw new Error("E-posta servisi için API anahtarı eksik.");
     }
 
-    const templatePath = path.join(TEMPLATES_DIR, template);
-    const source = await fs.readFile(templatePath, 'utf-8');
-    const compiledTemplate = handlebars.compile(source);
-    const htmlContent = compiledTemplate(data);
+    const htmlContent = `<p>Şifre sıfırlama linki: <a href="${data.resetLink}">${data.resetLink}</a></p>`;
 
     const requestBody = {
         sender: {

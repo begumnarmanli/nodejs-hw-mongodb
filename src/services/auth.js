@@ -117,12 +117,10 @@ const resetLink = `${process.env.APP_DOMAIN}/reset-password?token=${token}`;
   await sendEmail({
     to: user.email,
     subject: 'Password Reset Request',
-    template: 'reset-password-email.html',
     data: { resetLink, userName: user.name },
   });
 
-const newSession = await Session.create({ userId: user._id, token });
-return newSession;
+  return { message: 'Reset email sent successfully' };
 };
 
 export const resetPassword = async (payload) => {
