@@ -11,6 +11,11 @@ const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 export const sendEmail = async (options) => {
     const { to, subject, template, data } = options;
 
+    if (!BREVO_API_KEY) {
+        console.error("BREVO_API_KEY ortam değişkeni tanımlı değil!");
+        throw new Error("E-posta servisi için API anahtarı eksik.");
+    }
+
     const templatePath = path.join(TEMPLATES_DIR, template);
     const source = await fs.readFile(templatePath, 'utf-8');
     const compiledTemplate = handlebars.compile(source);
@@ -49,12 +54,14 @@ export const sendEmail = async (options) => {
             console.log("Email Brevo API ile başarıyla gönderildi. ID:", result.messageId);
             return result;
         } else {
-            console.error("Email gönderilemedi, Brevo API Hatası:", result);
+            console.error(`Brevo API Hatası - Durum Kodu: ${response.status}`);
+            console.error("Brevo API Hata Detayı (JSON):", result);
             throw new Error(`Brevo API Hatası ${response.status}: ${JSON.stringify(result)}`);
         }
 
     } catch (error) {
-        console.error("Email gönderilemedi, HATA MESAJI:", error.message);
-        throw new Error(`SMTP bağlantı/gönderim hatası: ${error.message}`);
+        console.error("Email gönderilemedi, GENEL HATA MESAJI:", error.message);
+        console.error("Hata Objesi Detayı:", error);
+        throw new Error(`E-posta gönderme işlemi başarısız: ${error.message}`);
     }
 };
