@@ -1,43 +1,60 @@
 import 'dotenv/config';
-import nodemailer from "nodemailer";
+import path from 'node:path';
+import fs from 'node:fs/promises';
+import handlebars from 'handlebars';
+import { TEMPLATES_DIR } from '../constants/index.js';
 
-export const sendEmail = async (data) => {
-  console.log("sendEmail fonksiyonu çağrıldı");
-  console.log("Gönderilecek veri:", data);
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
+const SMTP_FROM = process.env.SMTP_FROM;
+const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
 
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT),
-    secure: false,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASSWORD,
-    },
-    connectionTimeout: 15000,
-    greetingTimeout: 5000,
-    socketTimeout: 15000,
-  });
+export const sendEmail = async (options) => {
+    const { to, subject, template, data } = options;
 
-  try {
-    await transporter.verify();
-    console.log("SMTP bağlantısı ve kimlik doğrulama başarılı.");
+    const templatePath = path.join(TEMPLATES_DIR, template);
+    const source = await fs.readFile(templatePath, 'utf-8');
+    const compiledTemplate = handlebars.compile(source);
+    const htmlContent = compiledTemplate(data);
 
-    const mailOptions = {
-      from: `"My App" <${process.env.SMTP_FROM}>`,
-      to: data.to,
-      subject: data.subject,
-      html: data.html,
+    const requestBody = {
+        sender: {
+            name: "My App",
+            email: SMTP_FROM
+        },
+        to: [
+            {
+                email: to
+            }
+        ],
+        subject: subject,
+        htmlContent: htmlContent,
     };
 
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Email gönderildi, info:", info);
-    return info;
+    console.log("Brevo HTTP API ile e-posta gönderimi deneniyor...");
 
-  } catch (error) {
-    console.error("Email gönderilemedi, HATA KODU:", error.code);
-    console.error("Email gönderilemedi, HATA MESAJI:", error.message);
-    console.error("Email gönderilemedi, detay:", error);
+    try {
+        const response = await fetch(BREVO_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'api-key': BREVO_API_KEY
+            },
+            body: JSON.stringify(requestBody),
+            signal: AbortSignal.timeout(10000)
+        });
 
-    throw new Error(`SMTP bağlantı/gönderim hatası: ${error.message}`);
-  }
+        const result = await response.json();
+
+        if (response.ok) {
+            console.log("Email Brevo API ile başarıyla gönderildi. ID:", result.messageId);
+            return result;
+        } else {
+            console.error("Email gönderilemedi, Brevo API Hatası:", result);
+            throw new Error(`Brevo API Hatası ${response.status}: ${JSON.stringify(result)}`);
+        }
+
+    } catch (error) {
+        console.error("Email gönderilemedi, HATA MESAJI:", error.message);
+        throw new Error(`SMTP bağlantı/gönderim hatası: ${error.message}`);
+    }
 };
