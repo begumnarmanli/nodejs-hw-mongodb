@@ -115,18 +115,13 @@ export const requestResetToken = async (email) => {
   );
 
   const resetLink = `${process.env.APP_DOMAIN}/reset-password?token=${token}`;
-  try {
-    await sendEmail({
-      to: user.email,
-      subject: 'Password Reset Request',
-      text: `Click the following link to reset your password: ${resetLink}`,
-    });
-  } catch (_) {
-    throw createHttpError(
-      500,
-      'Failed to send the email, please try again later.',
-    );
-  }
+  await sendEmail({
+    to: user.email,
+    subject: 'Password Reset Request',
+    data: { resetLink, userName: user.name },
+  });
+
+  return { message: 'Reset email sent successfully' };
 };
 
 export const resetPassword = async (payload) => {

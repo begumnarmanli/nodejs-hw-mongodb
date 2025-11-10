@@ -1,0 +1,83 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Node.js API (Swagger)",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "description": "Bu proje, Node.js ile oluşturulmuş API'nin Swagger dokümantasyon örneğidir.\n"
+  },
+  "servers": [
+    {
+      "url": "https://api.myapp.com",
+      "description": "Yayınlanmış API"
+    },
+    {
+      "url": "https://staging.myapp.com",
+      "description": "Test ortamı"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Users",
+      "description": "Kullanıcı işlemleri"
+    },
+    {
+      "name": "Auth",
+      "description": "Kimlik doğrulama işlemleri"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Tüm kullanıcıları getirir",
+        "operationId": "getUsers",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Kullanıcı listesi başarıyla getirildi"
+          },
+          "400": {
+            "description": "Geçersiz istek"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Kullanıcı giriş işlemi",
+        "operationId": "loginUser",
+        "responses": {
+          "200": {
+            "description": "Başarılı giriş"
+          },
+          "400": {
+            "description": "Geçersiz kullanıcı adı veya şifre"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

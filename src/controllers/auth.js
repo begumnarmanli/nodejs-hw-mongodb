@@ -7,6 +7,7 @@ import {
 } from '#root/services/auth.js';
 import ctrlWrapper from '#root/utils/ctrlWrapper.js';
 import { resetPassword } from '#root/services/auth.js';
+import createHttpError from 'http-errors';
 
 export const registerUserController = ctrlWrapper(async (req, res) => {
   const user = await registerUser(req.body);
@@ -72,7 +73,18 @@ export const resetPasswordController = ctrlWrapper(async (req, res) => {
 
 export const requestResetEmailController = ctrlWrapper(async (req, res) => {
   const { email } = req.body;
-  await requestResetToken(email);
+  try {
+    await requestResetToken(email);
+  } catch (error) {
+    if (error.statusCode === 404) {
+      throw error;
+    }
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
+    );
+  }
+
   res.status(200).json({
     status: 200,
     message: 'Reset password email has been successfully sent.',

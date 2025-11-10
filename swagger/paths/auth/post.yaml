@@ -1,0 +1,10 @@
+post:
+  tags:
+    - Auth
+  summary: Kullanıcı giriş işlemi
+  operationId: loginUser
+  responses:
+    '200':
+      description: Başarılı giriş
+    '400':
+      description: Geçersiz kullanıcı adı veya şifre
