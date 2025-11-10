@@ -1,0 +1,12 @@
+get:
+  tags:
+    - Users
+  summary: Tüm kullanıcıları getirir
+  operationId: getUsers
+  security:
+    - bearerAuth: []
+  responses:
+    '200':
+      description: Kullanıcı listesi başarıyla getirildi
+    '400':
+      description: Geçersiz istek

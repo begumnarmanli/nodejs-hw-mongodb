@@ -79,7 +79,10 @@ export const requestResetEmailController = ctrlWrapper(async (req, res) => {
     if (error.statusCode === 404) {
       throw error;
     }
-    throw createHttpError(500, 'Failed to send the email, please try again later.');
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
+    );
   }
 
   res.status(200).json({

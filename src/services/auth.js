@@ -103,17 +103,18 @@ export const logOutUser = async (refreshToken) => {
 };
 
 export const requestResetToken = async (email) => {
-const user = await User.findOne({ email });
-if (!user) {
-throw createHttpError(404, 'User not found!');}
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw createHttpError(404, 'User not found!');
+  }
 
-const token = jwt.sign(
-{ _id: user._id, email: user.email },
-process.env.JWT_SECRET,
-{ expiresIn: '5m' },
-);
+  const token = jwt.sign(
+    { _id: user._id, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: '5m' },
+  );
 
-const resetLink = `${process.env.APP_DOMAIN}/reset-password?token=${token}`;
+  const resetLink = `${process.env.APP_DOMAIN}/reset-password?token=${token}`;
   await sendEmail({
     to: user.email,
     subject: 'Password Reset Request',

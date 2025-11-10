@@ -1,0 +1,19 @@
+tags:
+  - Contacts
+summary: Belirli bir kullanıcıyı getirir
+operationId: getContactById
+description: ID’ye göre tek bir kullanıcıyı döner
+security:
+  - bearerAuth: []
+parameters:
+  - name: contactId
+    in: path
+    required: true
+    schema:
+      type: string
+    description: Kullanıcının benzersiz ID’si
+responses:
+  '200':
+    description: Kullanıcı başarıyla getirildi
+  '404':
+    description: Kullanıcı bulunamadı

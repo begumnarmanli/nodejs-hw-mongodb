@@ -12,7 +12,9 @@ const getTransporter = () => {
   const SMTP_PASSWORD = process.env.SMTP_PASSWORD;
 
   if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASSWORD) {
-    throw new Error('E-posta servisi için gerekli ortam değişkenleri tanımlı değil!');
+    throw new Error(
+      'E-posta servisi için gerekli ortam değişkenleri tanımlı değil!',
+    );
   }
 
   const useSSL = SMTP_PORT === 465;
