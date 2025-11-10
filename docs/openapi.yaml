@@ -1,0 +1,38 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Node.js API (Swagger)
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: >
+    Bu proje, Node.js ile oluşturulmuş API'nin Swagger dokümantasyon örneğidir.
+
+tags:
+  - name: Users
+    description: Kullanıcı işlemleri
+  - name: Auth
+    description: Kimlik doğrulama işlemleri
+
+servers:
+  - url: https://api.myapp.com
+    description: Yayınlanmış API
+  - url: https://staging.myapp.com
+    description: Test ortamı
+
+security:
+  - bearerAuth: []
+
+paths:
+  /users:
+    $ref: '../swagger/paths/users/get.yaml'
+
+  /auth/login:
+    $ref: '../swagger/paths/auth/post.yaml'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
